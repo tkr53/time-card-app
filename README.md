@@ -1,36 +1,85 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 出退勤管理アプリ
 
-## Getting Started
+シンプルで使いやすい出退勤記録システムです。LocalStorageを利用してブラウザ上でデータを保存し、打刻記録の管理や勤務時間の自動計算、カレンダー表示などの機能を備えています。
 
-First, run the development server:
+このアプリケーションはVibe Codingにより作成されました。
 
+## 🚀 機能一覧
+
+### 基本機能
+- ✅ 出勤・退勤の打刻
+- ✅ リアルタイムでの勤務状況表示
+- ✅ 勤務時間の自動計算
+- ✅ LocalStorageを使用したデータ保存
+
+### 履歴機能
+- ✅ 日付別打刻履歴の表示
+- ✅ 履歴のフィルタリング
+- ✅ 勤務時間の集計
+
+### カレンダー機能
+- ✅ 月間カレンダーでの出勤状況表示
+- ✅ 営業日・出勤日のカウント
+- ✅ 祝日・休日の表示
+
+## 📱 スクリーンショット
+
+![出退勤管理アプリのスクリーンショット](./public/screenshot.png)
+
+## 🛠️ 技術スタック
+
+- [Next.js 15](https://nextjs.org/) - Reactフレームワーク
+- [React 19](https://react.dev/) - UIライブラリ
+- [TypeScript](https://www.typescriptlang.org/) - 型安全な開発
+- [Tailwind CSS](https://tailwindcss.com/) - スタイリング
+- [LocalStorage API](https://developer.mozilla.org/ja/docs/Web/API/Window/localStorage) - データ保存
+- [Vibe Coding](https://code.visualstudio.com/blogs/2023/03/30/vscode-copilot) - 開発支援ツール
+
+## 🚀 使い方
+
+1. リポジトリをクローン
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/yourusername/time-card-app.git
+cd time-card-app
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. 依存関係をインストール
+```bash
+npm install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. 開発サーバーを起動
+```bash
+npm run dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+4. ブラウザで以下のURLにアクセス
+```
+http://localhost:3000
+```
 
-## Learn More
+## 📋 ページ構成
 
-To learn more about Next.js, take a look at the following resources:
+- **ホーム (`/`)**: 打刻ボタンと今日の勤務状況
+- **履歴 (`/history`)**: 日付別の打刻履歴
+- **カレンダー (`/calendar`)**: 月間カレンダーでの勤務状況一覧
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 📊 今後の予定
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- [ ] 休憩時間の記録
+- [ ] データのエクスポート機能
+- [ ] 残業時間の計算
+- [ ] 打刻データの修正・削除機能
 
-## Deploy on Vercel
+## 👨‍💻 開発プロセス
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+このプロジェクトは[Vibe Coding](https://code.visualstudio.com/blogs/2023/03/30/vscode-copilot)を活用して開発されました。AIを活用したコーディング支援ツールによって、以下のような利点を得ることができました：
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- 効率的なコード生成
+- デザインパターンの一貫性
+- バグの早期発見と修正
+- 開発時間の短縮
+
+## 📝 ライセンス
+
+MIT
