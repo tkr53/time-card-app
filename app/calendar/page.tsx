@@ -1,26 +1,13 @@
-'use client';
-
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { MonthCalendar } from '@/components/MonthCalendar';
-import { getAllTimeRecords } from '@/services/timeRecordService';
+import { MonthCalendar } from '@/components/client/MonthCalendar';
+import { getAllTimeRecords } from '@/services/serverTimeRecordService';
 
 /**
  * カレンダーページ
  * 月間カレンダーで出勤状況を確認できるページ
  */
-export default function CalendarPage() {
-  const [selectedDate, setSelectedDate] = useState<string>('');
-  const router = useRouter();
-  
+export default async function CalendarPage() {
   // すべての打刻データを取得
-  const records = getAllTimeRecords();
-  
-  // 日付選択時のハンドラ
-  const handleSelectDate = (date: string) => {
-    setSelectedDate(date);
-    router.push(`/history?date=${date}`);
-  };
+  const records = await getAllTimeRecords();
   
   return (
     <main className="container mx-auto py-8 px-4">
@@ -31,8 +18,6 @@ export default function CalendarPage() {
       <div className="max-w-3xl mx-auto">
         <MonthCalendar 
           records={records}
-          selectedDate={selectedDate}
-          onSelectDate={handleSelectDate}
           showAttendanceStatus={true}
           showHolidays={true}
           className="mb-8"

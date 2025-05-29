@@ -1,14 +1,15 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import type { TimeRecord } from '@/types';
 import { getHolidayInfo, isBusinessDay } from '@/services/holidayService';
 import { getTodayDateString } from '@/services/timeRecordService';
 
 interface MonthCalendarProps {
   records: TimeRecord[];
-  selectedDate: string;
-  onSelectDate: (date: string) => void;
+  selectedDate?: string;
+  onSelectDate?: (date: string) => void;
   monthStr?: string; // YYYY-MM形式
   showAttendanceStatus?: boolean; // 出勤状況を表示するかどうか
   showHolidays?: boolean; // 祝日を表示するかどうか
@@ -20,13 +21,15 @@ interface MonthCalendarProps {
  */
 export function MonthCalendar({
   records,
-  selectedDate,
+  selectedDate: initialSelectedDate,
   onSelectDate,
   monthStr,
   showAttendanceStatus = true,
   showHolidays = true,
   className = ''
 }: MonthCalendarProps) {
+  const router = useRouter();
+  const [selectedDate, setSelectedDate] = useState<string>(initialSelectedDate || '');
   const [calendarDays, setCalendarDays] = useState<Array<{
     date: string; 
     dayOfMonth: number; 
@@ -111,12 +114,18 @@ export function MonthCalendar({
         
         const record = records.find(r => r.date === dateStr);
         if (record) {
-          if (record.clockIn && record.clockOut) {
-            attendanceStatus = 'present'; // 出勤済・退勤済
-            attendanceDaysCount++; // 出勤日カウント増加
-          } else if (record.clockIn) {
-            attendanceStatus = 'partial'; // 出勤済・退勤未
-            attendanceDaysCount++; // 出勤日カウント増加
+          if (record.entries && record.entries.length > 0) {
+            // 完了したエントリがある場合は出勤済み
+            const completedEntries = record.entries.filter(entry => entry.clockOut);
+            const hasActiveEntry = record.entries.some(entry => !entry.clockOut);
+            
+            if (completedEntries.length > 0 && !hasActiveEntry) {
+              attendanceStatus = 'present'; // 全て完了済み
+              attendanceDaysCount++; // 出勤日カウント増加
+            } else if (record.entries.length > 0) {
+              attendanceStatus = 'partial'; // 出勤中または一部完了
+              attendanceDaysCount++; // 出勤日カウント増加
+            }
           }
         } else if (new Date(dateStr) < new Date(getTodayDateString())) {
           // 過去の日付で記録がない場合は欠勤
@@ -195,7 +204,13 @@ export function MonthCalendar({
   
   // 日付クリックハンドラ
   const handleDateClick = (dateStr: string) => {
-    onSelectDate(dateStr);
+    setSelectedDate(dateStr);
+    if (onSelectDate) {
+      onSelectDate(dateStr);
+    } else {
+      // デフォルトでhistoryページに遷移
+      router.push(`/history?date=${dateStr}`);
+    }
   };
 
   return (

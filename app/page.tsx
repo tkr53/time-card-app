@@ -1,74 +1,44 @@
-'use client';
+import Link from 'next/link'
+import { getTodayStatus, getCurrentTime, formatTime } from '@/services/serverTimeRecordService'
+import { CurrentTime as ClientCurrentTime } from '@/components/client/CurrentTime'
+import { ClockButton } from '@/components/server/ClockButton'
+import { TodayStatus } from '@/components/server/TodayStatus'
+import { ClockHistory } from '@/components/server/ClockHistory'
+import { WorkSummary } from '@/components/server/WorkSummary'
 
-import { useState, useEffect } from "react";
-import Link from "next/link";
-import type { ClockStatus, ClockType } from "@/types";
-import { CurrentTime } from "@/components/CurrentTime";
-import { ClockButton } from "@/components/ClockButton";
-import { TodayStatus } from "@/components/TodayStatus";
-import { ClockHistory } from "@/components/ClockHistory";
-import WorkSummary from "@/components/WorkSummary";
-import { recordClock, getTodayTimeRecord } from "@/services/timeRecordService";
-
-export default function Home() {
-  const [clockStatus, setClockStatus] = useState<ClockStatus>('not-clocked-in');
-  const [isInitialized, setIsInitialized] = useState(false);
-
-  // アプリ起動時に、LocalStorageから状態を復元
-  useEffect(() => {
-    const initializeStatus = () => {
-      const todayRecord = getTodayTimeRecord();
-      
-      if (todayRecord) {
-        if (todayRecord.clockOut) {
-          setClockStatus('clocked-out');
-        } else if (todayRecord.clockIn) {
-          setClockStatus('clocked-in');
-        } else {
-          setClockStatus('not-clocked-in');
-        }
-      }
-      
-      setIsInitialized(true);
-    };
+/**
+ * メインページ - Server Component
+ */
+export default async function Home() {
+  const status = await getTodayStatus()
+  const currentTime = getCurrentTime()
+  const formattedTime = formatTime(currentTime)
+  
+  // 日付フォーマット関数
+  const formatDate = (date: Date): string => {
+    const year = date.getFullYear()
+    const month = (date.getMonth() + 1).toString().padStart(2, '0')
+    const day = date.getDate().toString().padStart(2, '0')
+    const dayNames = ['日', '月', '火', '水', '木', '金', '土']
+    const dayName = dayNames[date.getDay()]
     
-    initializeStatus();
-  }, []);
-
-  const handleClock = (type: ClockType) => {
-    try {
-      // LocalStorageに打刻データを保存
-      const updatedRecord = recordClock(type);
-      
-      // UI状態を更新
-      if (type === 'clock-in') {
-        setClockStatus('clocked-in');
-      } else if (type === 'clock-out') {
-        setClockStatus('clocked-out');
-      }
-
-      // LocalStorageの変更イベントを発火（他のコンポーネントに変更を通知）
-      window.dispatchEvent(new Event('storage'));
-    } catch (error) {
-      console.error('打刻処理中にエラーが発生しました:', error);
-      alert(`エラー: ${error instanceof Error ? error.message : '打刻処理中に問題が発生しました。'}`);
-    }
-  };
+    return `${year}年${month}月${day}日（${dayName}）`
+  }
 
   const getStatusMessage = () => {
-    switch (clockStatus) {
+    switch (status) {
       case 'not-clocked-in':
-        return { text: '出勤前', color: 'text-gray-600' };
+        return { text: '出勤前', color: 'text-gray-600' }
       case 'clocked-in':
-        return { text: '勤務中', color: 'text-blue-600' };
+        return { text: '勤務中', color: 'text-blue-600' }
       case 'clocked-out':
-        return { text: '退勤済み', color: 'text-green-600' };
+        return { text: '退勤済み', color: 'text-green-600' }
       default:
-        return { text: '状態不明', color: 'text-gray-600' };
+        return { text: '状態不明', color: 'text-gray-600' }
     }
-  };
+  }
 
-  const statusMessage = getStatusMessage();
+  const statusMessage = getStatusMessage()
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white dark:from-gray-900 dark:to-gray-800 p-4">
@@ -78,14 +48,18 @@ export default function Home() {
             出退勤管理
           </h1>
           <div className={`text-xl font-semibold ${statusMessage.color}`}>
-            {isInitialized ? statusMessage.text : '読み込み中...'}
+            {statusMessage.text}
           </div>
         </header>
 
         <main className="space-y-12">
           {/* 現在時刻表示 */}
           <section className="bg-white dark:bg-gray-800 rounded-3xl shadow-lg p-8">
-            <CurrentTime className="mb-4" />
+            <ClientCurrentTime 
+              initialTime={formattedTime}
+              initialDate={formatDate(currentTime)}
+              className="mb-4"
+            />
           </section>
 
           {/* 打刻ボタン */}
@@ -93,20 +67,7 @@ export default function Home() {
             <h2 className="text-2xl font-bold text-center text-gray-800 dark:text-white mb-8">
               打刻
             </h2>
-            <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
-              <ClockButton
-                type="clock-in"
-                status={clockStatus}
-                onClock={handleClock}
-                disabled={!isInitialized}
-              />
-              <ClockButton
-                type="clock-out"
-                status={clockStatus}
-                onClock={handleClock}
-                disabled={!isInitialized}
-              />
-            </div>
+            <ClockButton />
           </section>
 
           {/* 今日の勤務状況 */}
@@ -114,14 +75,7 @@ export default function Home() {
             <h2 className="text-2xl font-bold text-center text-gray-800 dark:text-white mb-6">
               今日の勤務状況
             </h2>
-            {isInitialized ? (
-              <TodayStatus />
-            ) : (
-              <div className="text-center text-gray-600 dark:text-gray-400 p-8">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-4"></div>
-                <p>データを読み込み中...</p>
-              </div>
-            )}
+            <TodayStatus />
           </section>
           
           {/* 勤務時間集計 */}
@@ -129,14 +83,7 @@ export default function Home() {
             <h2 className="text-2xl font-bold text-center text-gray-800 dark:text-white mb-6">
               勤務時間集計
             </h2>
-            {isInitialized ? (
-              <WorkSummary />
-            ) : (
-              <div className="text-center text-gray-600 dark:text-gray-400 p-8">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-4"></div>
-                <p>集計中...</p>
-              </div>
-            )}
+            <WorkSummary />
           </section>
 
           {/* 打刻履歴 */}
@@ -152,14 +99,7 @@ export default function Home() {
                 </svg>
               </Link>
             </div>
-            {isInitialized ? (
-              <ClockHistory limit={7} />
-            ) : (
-              <div className="text-center text-gray-600 dark:text-gray-400 p-8">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-4"></div>
-                <p>履歴を読み込み中...</p>
-              </div>
-            )}
+            <ClockHistory limit={7} />
           </section>
         </main>
 
@@ -168,5 +108,5 @@ export default function Home() {
         </footer>
       </div>
     </div>
-  );
+  )
 }
