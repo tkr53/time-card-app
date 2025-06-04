@@ -1,6 +1,9 @@
 import { MonthCalendar } from '@/components/client/MonthCalendar';
 import { getAllTimeRecords } from '@/services/databaseServerService';
 
+// 動的レンダリングを強制（認証のため）
+export const dynamic = 'force-dynamic';
+
 /**
  * カレンダーページ
  * 月間カレンダーで出勤状況を確認できるページ

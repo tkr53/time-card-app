@@ -1,6 +1,9 @@
 import { getAllTimeRecords } from '@/services/databaseServerService';
 import { HistoryClient } from '@/components/client/HistoryClient';
 
+// 動的レンダリングを強制（認証のため）
+export const dynamic = 'force-dynamic';
+
 interface HistoryPageProps {
   searchParams: Promise<{
     date?: string;
