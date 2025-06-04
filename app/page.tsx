@@ -1,10 +1,14 @@
 import Link from 'next/link'
-import { getTodayStatus, getCurrentTime, formatTime } from '@/services/serverTimeRecordService'
+import { getTodayStatus } from '@/services/databaseServerService'
+import { getCurrentTime, formatTime } from '@/services/serverTimeRecordService'
 import { CurrentTime as ClientCurrentTime } from '@/components/client/CurrentTime'
 import { ClockButton } from '@/components/server/ClockButton'
 import { TodayStatus } from '@/components/server/TodayStatus'
 import { ClockHistory } from '@/components/server/ClockHistory'
 import { WorkSummary } from '@/components/server/WorkSummary'
+
+// 動的レンダリングを強制してキャッシュを回避
+export const dynamic = 'force-dynamic'
 
 /**
  * メインページ - Server Component

@@ -1,8 +1,9 @@
 'use client'
 
 import { useState, useTransition } from 'react'
-import { clockInAction, clockOutAction } from '@/app/actions'
+import { clockInActionDB, clockOutActionDB } from '@/app/actionsDB'
 import type { ClockType, ClockStatus } from '@/types'
+import { useRouter } from 'next/navigation'
 
 interface ClockButtonProps {
   type: ClockType
@@ -15,6 +16,7 @@ interface ClockButtonProps {
 export function ClockButton({ type, status }: ClockButtonProps) {
   const [showConfirm, setShowConfirm] = useState(false)
   const [isPending, startTransition] = useTransition()
+  const router = useRouter()
 
   const isDisabled = () => {
     if (type === 'clock-in') {
@@ -59,11 +61,17 @@ export function ClockButton({ type, status }: ClockButtonProps) {
     startTransition(async () => {
       try {
         if (type === 'clock-in') {
-          await clockInAction()
+          await clockInActionDB()
         } else {
-          await clockOutAction()
+          await clockOutActionDB()
         }
         setShowConfirm(false)
+        // 打刻成功後にページを更新
+        router.refresh()
+        // さらに確実にするため少し遅延してからリロード
+        setTimeout(() => {
+          window.location.reload()
+        }, 100)
       } catch (error) {
         console.error('打刻処理中にエラーが発生しました:', error)
         alert(`エラー: ${error instanceof Error ? error.message : '打刻処理中に問題が発生しました。'}`)

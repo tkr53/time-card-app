@@ -1,4 +1,4 @@
-import { getCurrentTime, formatTime } from '@/services/serverTimeRecordService'
+import { getCurrentTime, formatTime } from '@/services/databaseServerService'
 
 interface CurrentTimeProps {
   className?: string

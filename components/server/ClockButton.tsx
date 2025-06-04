@@ -1,4 +1,4 @@
-import { getTodayStatus } from '@/services/serverTimeRecordService'
+import { getTodayStatus } from '@/services/databaseServerService'
 import { ClockButton as ClientClockButton } from '@/components/client/ClockButton'
 
 /**

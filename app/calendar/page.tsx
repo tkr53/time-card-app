@@ -1,5 +1,5 @@
 import { MonthCalendar } from '@/components/client/MonthCalendar';
-import { getAllTimeRecords } from '@/services/serverTimeRecordService';
+import { getAllTimeRecords } from '@/services/databaseServerService';
 
 /**
  * カレンダーページ
