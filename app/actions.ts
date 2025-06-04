@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { cookies } from 'next/headers'
+import { auth } from '@/auth'
 import type { TimeRecord, ClockEntry } from '@/types'
 import { v4 as uuidv4 } from 'uuid'
 
@@ -27,13 +28,21 @@ function calculateTotalDuration(entries: ClockEntry[]): number {
 export async function clockInAction() {
   'use server'
   
+  const session = await auth()
+  if (!session?.user?.id) {
+    throw new Error('認証が必要です')
+  }
+  
   const now = new Date()
   const today = now.toISOString().split('T')[0]
   const cookieStore = await cookies()
   
+  // ユーザー固有のキーを使用
+  const recordKey = `timecard-${session.user.id}-${today}`
+  
   // 今日の記録を取得または新規作成
   let todayRecord: TimeRecord
-  const existingRecord = cookieStore.get(`timecard-${today}`)
+  const existingRecord = cookieStore.get(recordKey)
   
   if (existingRecord) {
     try {
@@ -52,6 +61,7 @@ export async function clockInAction() {
       todayRecord = {
         id: uuidv4(),
         date: today,
+        userId: session.user.id,
         entries: [],
         totalWorkDuration: 0,
         createdAt: now.toISOString(),
@@ -62,6 +72,7 @@ export async function clockInAction() {
     todayRecord = {
       id: uuidv4(),
       date: today,
+      userId: session.user.id,
       entries: [],
       totalWorkDuration: 0,
       createdAt: now.toISOString(),
@@ -80,7 +91,7 @@ export async function clockInAction() {
   todayRecord.updatedAt = now.toISOString()
   
   // Cookieに保存（30日間）
-  cookieStore.set(`timecard-${today}`, JSON.stringify(todayRecord), {
+  cookieStore.set(recordKey, JSON.stringify(todayRecord), {
     maxAge: 30 * 24 * 60 * 60, // 30日間
     httpOnly: false, // クライアント側からも読み取り可能にする
     secure: process.env.NODE_ENV === 'production'
@@ -101,12 +112,20 @@ export async function clockInAction() {
 export async function clockOutAction() {
   'use server'
   
+  const session = await auth()
+  if (!session?.user?.id) {
+    throw new Error('認証が必要です')
+  }
+  
   const now = new Date()
   const today = now.toISOString().split('T')[0]
   const cookieStore = await cookies()
   
+  // ユーザー固有のキーを使用
+  const recordKey = `timecard-${session.user.id}-${today}`
+  
   // 今日の記録を取得
-  const existingRecord = cookieStore.get(`timecard-${today}`)
+  const existingRecord = cookieStore.get(recordKey)
   
   if (!existingRecord) {
     throw new Error('出勤記録がありません')
@@ -136,7 +155,7 @@ export async function clockOutAction() {
   todayRecord.updatedAt = now.toISOString()
   
   // Cookieに保存
-  cookieStore.set(`timecard-${today}`, JSON.stringify(todayRecord), {
+  cookieStore.set(recordKey, JSON.stringify(todayRecord), {
     maxAge: 30 * 24 * 60 * 60, // 30日間
     httpOnly: false,
     secure: process.env.NODE_ENV === 'production'
@@ -156,6 +175,11 @@ export async function clockOutAction() {
 
 export async function navigateToHistory(date?: string) {
   'use server'
+  
+  const session = await auth()
+  if (!session?.user?.id) {
+    throw new Error('認証が必要です')
+  }
   
   if (date) {
     redirect(`/history?date=${date}`)

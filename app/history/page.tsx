@@ -1,4 +1,4 @@
-import { getAllTimeRecords } from '@/services/serverTimeRecordService';
+import { getAllTimeRecords } from '@/services/databaseServerService';
 import { HistoryClient } from '@/components/client/HistoryClient';
 
 interface HistoryPageProps {

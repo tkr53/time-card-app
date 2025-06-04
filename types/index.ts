@@ -14,6 +14,7 @@ export interface ClockEntry {
 export interface TimeRecord {
   id: string;
   date: string; // YYYY-MM-DD形式
+  userId?: string; // ユーザーID（オプショナル：既存データとの互換性を保つため）
   entries: ClockEntry[]; // 複数の出勤・退勤エントリ
   totalWorkDuration: number; // 1日の総勤務時間（分）
   createdAt?: Date | string; // 作成日時
@@ -57,4 +58,46 @@ export interface WorkStatistics {
     start: string;
     end: string;
   };
+}
+
+// ユーザー認証関連の型
+export interface User {
+  id: string;
+  email: string;
+  name: string;
+  createdAt: Date | string;
+  updatedAt: Date | string;
+}
+
+export interface Session {
+  id: string;
+  userId: string;
+  token: string;
+  expiresAt: Date | string;
+  createdAt: Date | string;
+}
+
+export interface AuthState {
+  isAuthenticated: boolean;
+  user: User | null;
+  loading: boolean;
+}
+
+export interface LoginCredentials {
+  email: string;
+  password: string;
+}
+
+export interface RegisterData {
+  email: string;
+  name: string;
+  password: string;
+  confirmPassword: string;
+}
+
+export interface AuthResponse {
+  success: boolean;
+  user?: User;
+  token?: string;
+  message?: string;
 }

@@ -1,4 +1,4 @@
-import { getAllTimeRecords, formatTime } from '@/services/serverTimeRecordService';
+import { getAllTimeRecords, formatTime } from '@/services/databaseServerService';
 import { formatWorkDuration } from '@/services/timeRecordService';
 import type { TimeRecord } from '@/types';
 
