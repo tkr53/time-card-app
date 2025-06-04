@@ -17,9 +17,12 @@ export default function RegisterForm() {
       const result = await registerUser(formData)
       if (result.success) {
         router.push(`/login?message=${encodeURIComponent(result.message)}`)
+      } else {
+        setError(result.message)
       }
     } catch (error) {
-      setError(error instanceof Error ? error.message : "登録に失敗しました")
+      console.error("Registration error:", error)
+      setError("登録処理中にエラーが発生しました。しばらく時間をおいて再度お試しください。")
     } finally {
       setIsLoading(false)
     }
