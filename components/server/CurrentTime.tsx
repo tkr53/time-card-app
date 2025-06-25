@@ -9,7 +9,7 @@ interface CurrentTimeProps {
  * 初期値はサーバーで生成され、クライアント側でリアルタイム更新される
  */
 export function CurrentTime({ className = '' }: CurrentTimeProps) {
-  const currentTime = getCurrentTime()
+  const currentTime = new Date()
   const formattedTime = formatTime(currentTime)
   
   const formatDate = (date: Date): string => {
