@@ -22,8 +22,17 @@ export function HistoryClient({ initialRecords, initialSelectedDate }: HistoryCl
 
   // 初期設定
   useEffect(() => {
+    const parsedRecords = initialRecords.map(record => ({
+      ...record,
+      entries: record.entries.map(entry => ({
+        ...entry,
+        clockIn: new Date(entry.clockIn),
+        clockOut: entry.clockOut ? new Date(entry.clockOut) : null,
+      })),
+    }));
+
     // 降順ソート（新しい順）
-    const sortedRecords = [...initialRecords].sort((a, b) => {
+    const sortedRecords = [...parsedRecords].sort((a, b) => {
       return new Date(b.date).getTime() - new Date(a.date).getTime();
     });
     
