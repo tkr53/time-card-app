@@ -1,5 +1,5 @@
-import { getAllTimeRecords, formatTime } from '@/services/databaseServerService';
-import { formatWorkDuration } from '@/services/timeRecordService';
+import { getAllTimeRecords } from '@/app/actions/timeRecord';
+import { formatTime, formatWorkDuration } from '@/utils/time';
 import type { TimeRecord } from '@/types';
 
 interface ClockHistoryProps {

@@ -2,7 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 import { auth } from '@/auth'
-import { clockIn, clockOut } from '@/services/databaseTimeRecordService'
+import { clockIn, clockOut } from '@/lib/prisma/timeRecord'
 
 /**
  * データベースを使用した出勤処理

@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { formatWorkDuration, getLocalDateString } from '@/services/timeRecordService';
+import { formatWorkDuration } from '@/utils/time';
+import { getLocalDateString } from '@/utils/date';
 import { DateFilter } from '@/components/client/DateFilter';
 import { MonthCalendar } from '@/components/client/MonthCalendar';
 import type { TimeRecord } from '@/types';

@@ -1,4 +1,4 @@
-import { getAllTimeRecords } from '@/services/databaseServerService';
+import { getAllTimeRecords } from '@/app/actions/timeRecord';
 import { HistoryClient } from '@/components/client/HistoryClient';
 
 // 動的レンダリングを強制（認証のため）
