@@ -109,9 +109,7 @@ export const clockOut = async (userId: string): Promise<ClockEntry> => {
     where: { timeRecordId: timeRecord.id }
   })
   
-  const totalDuration = allEntries.reduce((total, entry) => {
-    return total + (entry.duration || 0)
-  }, 0)
+  const totalDuration = calculateTotalDuration(allEntries.map(e => ({...e, clockIn: e.clockIn, clockOut: e.clockOut, duration: e.duration ?? undefined, id: e.id})))
 
   await prisma.timeRecord.update({
     where: { id: timeRecord.id },
