@@ -5,7 +5,7 @@
 import { prisma } from '@/lib/prisma'
 import type { TimeRecord, ClockEntry, TodayWorkStatus, ClockStatus, WorkStatistics } from '@/types'
 import { getTodayDateString } from '@/utils/date';
-import { calculateDuration } from '@/utils/time';
+import { calculateDuration, calculateTotalDuration } from '@/utils/time';
 
 /**
  * 出勤処理
