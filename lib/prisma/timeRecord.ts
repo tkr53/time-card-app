@@ -1,34 +1,11 @@
+
 /**
- * Prismaを使用したデータベースサービス
+ * Prismaを使ったTimeRecordテーブルへのアクセスサービス
  */
 import { prisma } from '@/lib/prisma'
 import type { TimeRecord, ClockEntry, TodayWorkStatus, ClockStatus, WorkStatistics } from '@/types'
-import { v4 as uuidv4 } from 'uuid'
-
-/**
- * 今日の日付をYYYY-MM-DD形式で取得
- */
-export const getTodayDateString = (): string => {
-  const date = new Date()
-  const year = date.getFullYear()
-  const month = String(date.getMonth() + 1).padStart(2, '0')
-  const day = String(date.getDate()).padStart(2, '0')
-  return `${year}-${month}-${day}`
-}
-
-/**
- * 勤務時間を計算（分単位）
- */
-export const calculateDuration = (clockIn: Date, clockOut: Date): number => {
-  return Math.floor((clockOut.getTime() - clockIn.getTime()) / (1000 * 60))
-}
-
-/**
- * 総勤務時間を計算
- */
-export const calculateTotalDuration = (entries: ClockEntry[]): number => {
-  return entries.reduce((total, entry) => total + (entry.duration || 0), 0)
-}
+import { getTodayDateString } from '@/utils/date';
+import { calculateDuration } from '@/utils/time';
 
 /**
  * 出勤処理
@@ -306,20 +283,5 @@ export const getMonthlyStatistics = async (year: number, month: number, userId: 
       start: startDate,
       end: endDate
     }
-  }
-}
-
-/**
- * 勤務時間フォーマット（X時間Y分）
- */
-export const formatWorkDuration = (minutes: number): string => {
-  const hours = Math.floor(minutes / 60)
-  const mins = minutes % 60
-  if (hours > 0 && mins > 0) {
-    return `${hours}時間${mins}分`
-  } else if (hours > 0) {
-    return `${hours}時間`
-  } else {
-    return `${mins}分`
   }
 }
