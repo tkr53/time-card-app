@@ -1,7 +1,8 @@
+
 /**
  * 日本の祝日を管理するサービス
  */
-import { getLocalDateString } from '@/services/timeRecordService';
+import { getLocalDateString } from '@/utils/date';
 
 // 祝日の型定義
 export interface Holiday {

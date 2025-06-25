@@ -1,9 +1,18 @@
+
+'use server'
+
 /**
- * データベースを使用するServer Component用のサービス
+ * タイムカードに関連するServer Actions
  */
 import type { TimeRecord, ClockStatus, TodayWorkStatus } from '@/types'
-import { getTodayWorkStatus as dbGetTodayWorkStatus, getAllTimeRecords as dbGetAllTimeRecords } from '@/services/databaseTimeRecordService'
+import {
+  getTodayWorkStatus as dbGetTodayWorkStatus,
+  getAllTimeRecords as dbGetAllTimeRecords,
+  clockIn as dbClockIn,
+  clockOut as dbClockOut
+} from '@/lib/prisma/timeRecord';
 import { auth } from '@/auth'
+import { revalidatePath } from 'next/cache';
 
 /**
  * 今日の打刻状況を取得
@@ -11,13 +20,10 @@ import { auth } from '@/auth'
 export async function getTodayStatus(): Promise<ClockStatus> {
   try {
     const session = await auth()
-    console.log('getTodayStatus - session:', session?.user?.id)
     if (!session?.user?.id) {
-      console.log('getTodayStatus - No authenticated user, returning not-clocked-in')
       return 'not-clocked-in'
     }
     const workStatus = await dbGetTodayWorkStatus(session.user.id)
-    console.log('getTodayStatus - workStatus:', workStatus)
     return workStatus.status
   } catch (error) {
     console.error('Error getting today status:', error)
@@ -31,7 +37,6 @@ export async function getTodayStatus(): Promise<ClockStatus> {
 export async function getTodayWorkStatus(): Promise<TodayWorkStatus> {
   try {
     const session = await auth()
-    console.log('getTodayWorkStatus - session:', session?.user?.id)
     if (!session?.user?.id) {
       const today = new Date().toISOString().split('T')[0]
       return {
@@ -42,7 +47,6 @@ export async function getTodayWorkStatus(): Promise<TodayWorkStatus> {
       }
     }
     const result = await dbGetTodayWorkStatus(session.user.id)
-    console.log('getTodayWorkStatus - result:', result)
     return result
   } catch (error) {
     console.error('Error getting today work status:', error)
@@ -73,17 +77,25 @@ export async function getAllTimeRecords(): Promise<TimeRecord[]> {
 }
 
 /**
- * 現在時刻を取得
+ * 出勤処理
  */
-export function getCurrentTime(): Date {
-  return new Date()
+export async function clockIn() {
+  const session = await auth();
+  if (!session?.user?.id) {
+    throw new Error('User not authenticated');
+  }
+  await dbClockIn(session.user.id);
+  revalidatePath('/');
 }
 
 /**
- * 時刻をフォーマット
+ * 退勤処理
  */
-export function formatTime(date: Date): string {
-  const hours = date.getHours()
-  const minutes = date.getMinutes()
-  return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`
+export async function clockOut() {
+  const session = await auth();
+  if (!session?.user?.id) {
+    throw new Error('User not authenticated');
+  }
+  await dbClockOut(session.user.id);
+  revalidatePath('/');
 }
