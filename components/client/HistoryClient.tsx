@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { formatWorkDuration, getLocalDateString } from '@/services/timeRecordService';
+import { formatWorkDuration } from '@/utils/time';
+import { getLocalDateString } from '@/utils/date';
 import { DateFilter } from '@/components/client/DateFilter';
 import { MonthCalendar } from '@/components/client/MonthCalendar';
 import type { TimeRecord } from '@/types';
@@ -21,8 +22,17 @@ export function HistoryClient({ initialRecords, initialSelectedDate }: HistoryCl
 
   // 初期設定
   useEffect(() => {
+    const parsedRecords = initialRecords.map(record => ({
+      ...record,
+      entries: record.entries.map(entry => ({
+        ...entry,
+        clockIn: new Date(entry.clockIn),
+        clockOut: entry.clockOut ? new Date(entry.clockOut) : null,
+      })),
+    }));
+
     // 降順ソート（新しい順）
-    const sortedRecords = [...initialRecords].sort((a, b) => {
+    const sortedRecords = [...parsedRecords].sort((a, b) => {
       return new Date(b.date).getTime() - new Date(a.date).getTime();
     });
     

@@ -1,5 +1,5 @@
-import { getAllTimeRecords } from '@/services/serverTimeRecordService';
-import { formatWorkDuration } from '@/services/timeRecordService';
+import { getAllTimeRecords } from '@/app/actions/timeRecord';
+import { formatWorkDuration } from '@/utils/time';
 import type { TimeRecord } from '@/types';
 
 interface WorkSummaryProps {

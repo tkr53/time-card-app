@@ -1,6 +1,6 @@
 import Link from 'next/link'
-import { getTodayStatus } from '@/services/databaseServerService'
-import { getCurrentTime, formatTime } from '@/services/serverTimeRecordService'
+import { getTodayStatus } from '@/app/actions/timeRecord'
+import { formatTime } from '@/utils/time'
 import { CurrentTime as ClientCurrentTime } from '@/components/client/CurrentTime'
 import { ClockButton } from '@/components/server/ClockButton'
 import { TodayStatus } from '@/components/server/TodayStatus'
@@ -15,7 +15,7 @@ export const dynamic = 'force-dynamic'
  */
 export default async function Home() {
   const status = await getTodayStatus()
-  const currentTime = getCurrentTime()
+  const currentTime = new Date()
   const formattedTime = formatTime(currentTime)
   
   // 日付フォーマット関数

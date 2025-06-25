@@ -3,8 +3,8 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import type { TimeRecord } from '@/types';
-import { getHolidayInfo, isBusinessDay } from '@/services/holidayService';
-import { getTodayDateString } from '@/services/timeRecordService';
+import { getHolidayInfo, isBusinessDay } from '@/utils/holiday';
+import { getTodayDateString } from '@/utils/date';
 
 interface MonthCalendarProps {
   records: TimeRecord[];

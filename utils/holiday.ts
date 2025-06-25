@@ -1,7 +1,10 @@
+
 /**
  * 日本の祝日を管理するサービス
  */
-import { getLocalDateString } from '@/services/timeRecordService';
+import { getLocalDateString } from '@/utils/date';
+
+import holidaysData from '@/holidays.json';
 
 // 祝日の型定義
 export interface Holiday {
@@ -9,37 +12,7 @@ export interface Holiday {
   name: string; // 祝日名
 }
 
-// 2025年の日本の祝日データ
-const JAPAN_HOLIDAYS_2025: Holiday[] = [
-  { date: '2025-01-01', name: '元日' },
-  { date: '2025-01-13', name: '成人の日' },
-  { date: '2025-02-11', name: '建国記念の日' },
-  { date: '2025-02-23', name: '天皇誕生日' },
-  { date: '2025-02-24', name: '天皇誕生日（振替休日）' },
-  { date: '2025-03-20', name: '春分の日' },
-  { date: '2025-04-29', name: '昭和の日' },
-  { date: '2025-05-03', name: '憲法記念日' },
-  { date: '2025-05-04', name: 'みどりの日' },
-  { date: '2025-05-05', name: 'こどもの日' },
-  { date: '2025-05-06', name: 'こどもの日（振替休日）' },
-  { date: '2025-07-21', name: '海の日' },
-  { date: '2025-08-11', name: '山の日' },
-  { date: '2025-09-15', name: '敬老の日' },
-  { date: '2025-09-23', name: '秋分の日' },
-  { date: '2025-10-13', name: 'スポーツの日' },
-  { date: '2025-11-03', name: '文化の日' },
-  { date: '2025-11-23', name: '勤労感謝の日' },
-  { date: '2025-11-24', name: '勤労感謝の日（振替休日）' }
-];
-
-// 2026年の日本の祝日データ（一部）
-const JAPAN_HOLIDAYS_2026: Holiday[] = [
-  { date: '2026-01-01', name: '元日' },
-  { date: '2026-01-12', name: '成人の日' },
-  { date: '2026-02-11', name: '建国記念の日' },
-  { date: '2026-02-23', name: '天皇誕生日' },
-  { date: '2026-03-20', name: '春分の日' }
-];
+const allHolidays: Holiday[] = Object.values(holidaysData).flat();
 
 /**
  * 指定した日付が祝日かどうか判定
@@ -47,7 +20,7 @@ const JAPAN_HOLIDAYS_2026: Holiday[] = [
  * @returns 祝日データ（祝日でない場合はundefined）
  */
 export function getHolidayInfo(dateStr: string): Holiday | undefined {
-  return [...JAPAN_HOLIDAYS_2025, ...JAPAN_HOLIDAYS_2026].find(
+  return allHolidays.find(
     holiday => holiday.date === dateStr
   );
 }
@@ -58,7 +31,7 @@ export function getHolidayInfo(dateStr: string): Holiday | undefined {
  * @returns 祝日情報の配列
  */
 export function getHolidaysInMonth(yearMonth: string): Holiday[] {
-  return [...JAPAN_HOLIDAYS_2025, ...JAPAN_HOLIDAYS_2026].filter(
+  return allHolidays.filter(
     holiday => holiday.date.startsWith(yearMonth)
   );
 }

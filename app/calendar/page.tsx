@@ -1,5 +1,5 @@
 import { MonthCalendar } from '@/components/client/MonthCalendar';
-import { getAllTimeRecords } from '@/services/databaseServerService';
+import { getAllTimeRecords } from '@/app/actions/timeRecord';
 
 // 動的レンダリングを強制（認証のため）
 export const dynamic = 'force-dynamic';
