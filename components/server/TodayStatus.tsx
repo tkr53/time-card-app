@@ -1,4 +1,4 @@
-import { getTodayWorkStatus } from '@/services/databaseServerService'
+import { getTodayWorkStatus } from '@/app/actions/timeRecord'
 
 /**
  * 今日の勤務状況を表示するServer Component

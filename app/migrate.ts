@@ -1,6 +1,6 @@
 'use server'
 
-import { migrateCookieDataToDatabase, clearCookieData } from '@/services/migrationService'
+import { migrateCookieDataToDatabase, clearCookieData } from '@/lib/migration'
 import { revalidatePath } from 'next/cache'
 
 /**
